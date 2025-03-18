@@ -1,0 +1,16 @@
+/* 3.2.6
+Написать программу, которая вычисляет сумму и разность двух заданных чисел, а также результат деления первого числа на второе с помощью "/"  и операнда "%".
+using System;*/
+
+public class MainClass
+{
+    public static void Main()
+    {
+        double a = Convert.ToDouble(Console.ReadLine());
+        double b = Convert.ToDouble(Console.ReadLine());
+        Console.WriteLine("Сумма двух чисел = {0}", a+b);
+        Console.WriteLine("Разность двух чисел = {0}", a-b);
+        Console.WriteLine("Целочисленное деление = {0}", a/b);
+        Console.WriteLine("Остаток = {0}", a%b);
+    }
+}
