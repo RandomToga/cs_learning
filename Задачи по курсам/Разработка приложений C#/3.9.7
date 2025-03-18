@@ -1,0 +1,26 @@
+/* 3.9.7
+Написать программу, которая принимает на входе три целочисленных числа и выводит: квадрат первого числа, куб второго, четвертую степень третьего числа. 
+Решить задачу с помощью пользовательской функции Degrees, которая проведет расчет и вернёт выходных значения обратно в программу.*/
+
+using System;
+
+class Program
+{
+    static void Degrees(in int n1, int n2, int n3, out int sq2, out int sq3, out int sq4){
+        sq2 = Convert.ToInt32(Math.Pow(n1, 2));
+        sq3 = Convert.ToInt32(Math.Pow(n2, 3));
+        sq4 = Convert.ToInt32(Math.Pow(n3, 4));
+    }
+    static void Main()
+    {
+        int n1 = Convert.ToInt32(Console.ReadLine());
+        int n2 = Convert.ToInt32(Console.ReadLine());
+        int n3 = Convert.ToInt32(Console.ReadLine());
+        int sq2;
+        int sq3;
+        int sq4;
+        Degrees(n1, n2, n3, out sq2, out sq3, out sq4);
+        Console.WriteLine("Квадрат первого числа = {0}, Куб второго числа = {1}, Третье число в четвёртой степени = {2}", sq2, sq3, sq4);
+    }
+    
+}
