@@ -1,0 +1,13 @@
+/* 3.4.7
+Напишите программу, которая выведет все нечётные числа из интервала от 0 до N включительно. Ноль считать четным числом.*/
+
+using System;
+
+public class MainClass
+{
+    public static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        for(int i=1; i<=n;i+=2) Console.WriteLine(i);
+    }
+}
