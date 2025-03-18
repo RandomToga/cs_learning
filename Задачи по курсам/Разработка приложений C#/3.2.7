@@ -1,0 +1,29 @@
+/* 3.2.7
+Напишите программу-калькулятор, которая выполняет операцию сложения, вычитания, умножения и оператор деления двух чисел ("/").*/
+
+using System;
+
+public class MainClass
+{
+    public static void Main()
+    {
+        double a = Convert.ToDouble(Console.ReadLine());
+        double b = Convert.ToDouble(Console.ReadLine());
+        char s = Convert.ToChar(Console.ReadLine());
+        switch (s){
+            case '+': 
+                Console.WriteLine("Результат сложения = {0}", a+b);
+                break;
+            case '-': 
+                Console.WriteLine("Результат вычитания = {0}", a-b);
+                break;
+            case '*': 
+                Console.WriteLine("Результат умножения = {0}", a*b);
+                break;
+            case '/':
+                if (b==0) Console.WriteLine("Попытка деления на ноль!");
+                else Console.WriteLine("Результат деления = {0}", a/b);
+                break;
+        }
+    }
+}
