@@ -1,0 +1,18 @@
+/* 3.6.9
+Напишите программу, которая выведет квадраты значений элементов целочисленного массива.*/
+
+using System;
+
+public class MainClass
+{
+    public static void Main()
+    {
+        Console.ReadLine();
+        string[] a = Console.ReadLine().Split(' ');
+        int[] array = new int[a.Length];
+        for (int i = 0; i < array.Length; ++i){
+            array[i] = Convert.ToInt32(a[i]);
+            Console.WriteLine("Квадрат {0} элемента = {1}", i, Math.Pow(array[i], 2));
+        }
+    }
+}
