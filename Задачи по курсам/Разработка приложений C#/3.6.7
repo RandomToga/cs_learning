@@ -1,0 +1,20 @@
+/* 3.6.7
+Напишите программу, которая проверит. все ли элементы целочисленного одномерного массива положительные.*/
+
+using System;
+
+public class MainClass
+{
+    public static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int[] array = new int[n];
+        bool flag = true;
+        for(int i=0; i<n; i++){
+            array[i] = Convert.ToInt32(Console.ReadLine());
+            if (array[i]<0) flag = false;
+        }
+        if(flag) Console.WriteLine("Все элементы положительные!");
+        else Console.WriteLine("Отрицательный элемент есть!");
+    }
+}
