@@ -1,0 +1,31 @@
+/* 3.9.10
+Напишите программу, которая вычислит площадь прямоугольного треугольника, прямоугольника, квадрата и круга. Для решения используйте перегруженную пользовательскую функцию Area.
+P.S. пришлось немного схитрить, изначально все данные должны были вводиться целыми...*/
+
+using System;
+
+public class MainClass
+{
+    static double Area(in double atri, in int btri){ //треугольник
+        return (0.5*atri*btri);
+    }
+    static int Area(in int arect, in int brect){ //прямоугольник
+        return (arect*brect);
+    }
+    static int Area(in int asq){ //квадрат
+        return ((int)Math.Pow(asq, 2));
+    }
+    static double Area(in double r){ //круг
+        return (Math.PI * r * r);
+    }
+    public static void Main()
+    {
+        double atri = Convert.ToInt32(Console.ReadLine());
+        int btri = Convert.ToInt32(Console.ReadLine());
+        int arect = Convert.ToInt32(Console.ReadLine());
+        int brect = Convert.ToInt32(Console.ReadLine());
+        int asq = Convert.ToInt32(Console.ReadLine());
+        double r = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Площадь треугольника = {0}, площадь прямоугольника = {1}, площадь квадрата = {2}, площадь круга = {3}", Area(atri, btri), Area(arect, brect), Area(asq), Area(r));
+    }
+}
