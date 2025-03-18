@@ -1,0 +1,17 @@
+/*3.2 шаг 4
+Напишите программу для построчного ввода и вывода данных разных типов. Требуется ввести данные из консоли, преобразовать их в указанный тип и 
+вывести в консоль по образцу, воспользовавшись сложением (конкатенацией) строк.*/
+using System;
+
+public class MainClass
+{
+    public static void Main()
+    {
+        int s1 = Convert.ToInt32(Console.ReadLine());
+        double s2 = Convert.ToDouble(Console.ReadLine());
+        char s3 = Convert.ToChar(Console.ReadLine());
+        string s4 = Console.ReadLine();
+        Console.WriteLine("Целое число = {0}\nЧисло с плавающей точкой = {1}\nСимвол = {2}\nСтрока = {3}", s1, s2, s3, s4);
+        
+    }
+}
