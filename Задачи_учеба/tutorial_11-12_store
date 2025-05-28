@@ -3,446 +3,306 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-// Базовый класс товара
+
 public abstract class Product
 {
+    //переменные
+    protected int id;
     protected string name;
     protected double price;
     protected int quantity;
-    protected string category;
 
-    public Product(string nm, double pr, int qt, string ct)
-    {
-        name = nm;
-        price = pr;
-        quantity = qt;
-        category = ct;
-    }
-
-    // Виртуальные методы
-    public abstract void DisplayInfo();
-    public abstract void WriteToBinaryFile(BinaryWriter writer);
-    public abstract void GetSpecificInfo();
-
-    // Свойства и методы
+    public int Id => id;
     public string Name => name;
     public double Price => price;
     public int Quantity => quantity;
-    public string Category => category;
-
-    public void SetPrice(double price2)
+    
+    //конструктор
+    protected Product(int id, string name, double price, int quantity)
     {
-        price = price2;
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+    //методы
+    public virtual void DisplayInfo()
+    {
+        Console.WriteLine($"ID: {id}, Название: {name}, Цена: {price}, Количество: {quantity}");
     }
 
-    public void SetQuantity(int quantity2)
+    public virtual void ChangePrice(double new_price)
     {
-        quantity = quantity2;
-    }
-
-    public void AddQuantity(int amount)
-    {
-        quantity += amount;
-    }
-
-    public void DecreaseQuantity(int amount)
-    {
-        if (quantity >= amount)
-        {
-            quantity -= amount;
-        }
-        else
-        {
-            quantity = 0;
-        }
-    }
-
-    public bool IsInStock()
-    {
-        return quantity > 0;
+        price = new_price;
     }
 }
-
-// Класс для продуктов питания
-public class Food : Product
-{
-    private string expirationDate;
-    private double weight;
-
-    public Food(string nm, double pr, int qt, string expDate, double weig) 
-        : base(nm, pr, qt, "Food")
-    {
-        expirationDate = expDate;
-        weight = weig;
-    }
-
-    public override void DisplayInfo()
-    {
-        Console.WriteLine($"Продукт питания: {name}");
-        Console.WriteLine($"Цена: {price}");
-        Console.WriteLine($"Количество: {quantity}");
-        Console.WriteLine($"Срок годности: {expirationDate}");
-        Console.WriteLine($"Вес: {weight}кг");
-    }
-
-    public override void WriteToBinaryFile(BinaryWriter writer)
-    {
-        writer.Write("Food");
-        writer.Write(name);
-        writer.Write(price);
-        writer.Write(quantity);
-        writer.Write(expirationDate);
-        writer.Write(weight);
-    }
-
-    public override void GetSpecificInfo()
-    {
-        Console.WriteLine($"Срок годности: {expirationDate}, Вес: {weight}кг");
-    }
-}
-
-// Класс для одежды
-public class Clother : Product
+public class Clothing : Product
 {
     private string size;
     private string color;
-    private string material;
-
-    public Clother(string nm, double pr, int qt, string sz, string col, string mat)
-        : base(nm, pr, qt, "Clothing")
+    public string Size => size;
+    public string Color => color;
+    // конструктор
+    public Clothing(int id, string name, double price, int quantity, string size, string color) : base(id, name, price, quantity)
     {
-        size = sz;
-        color = col;
-        material = mat;
+        this.size = size;
+        this.color = color;
     }
 
-    public override void DisplayInfo()
+    public override void DisplayInfo() //перегрузка базовой функии
     {
-        Console.WriteLine($"Одежда: {name}");
-        Console.WriteLine($"Цена: {price}");
-        Console.WriteLine($"Количество: {quantity}");
-        Console.WriteLine($"Размер: {size}");
-        Console.WriteLine($"Цвет: {color}");
-        Console.WriteLine($"Материал: {material}");
+        base.DisplayInfo(); // Вызываем базовую версию
+        Console.WriteLine($"Размер: {size}, Цвет: {color}");
     }
-
-    public override void WriteToBinaryFile(BinaryWriter writer)
+    public void ChangeSize(string newSize)
     {
-        writer.Write("Clothing");
-        writer.Write(name);
-        writer.Write(price);
-        writer.Write(quantity);
-        writer.Write(size);
-        writer.Write(color);
-        writer.Write(material);
-    }
-
-    public override void GetSpecificInfo()
-    {
-        Console.WriteLine($"Размер: {size}, Цвет: {color}, Материал: {material}");
+        size = newSize;
     }
 }
-
-// Класс магазина
-public class Store
+public class Shop
 {
     private List<Product> products = new List<Product>();
-
-    // Добавление товара
-    public void AddProduct(Product product)
+    public void AddClothing()
     {
-        products.Add(product);
+        Console.Write("ID: ");
+        int id = int.Parse(Console.ReadLine());
+        Console.Write("Название: ");
+        string name = Console.ReadLine();
+        Console.Write("Цена: ");
+        double price = double.Parse(Console.ReadLine());
+        Console.Write("Количество: ");
+        int quantity = int.Parse(Console.ReadLine());
+        Console.Write("Размер: ");
+        string size = Console.ReadLine();
+        Console.Write("Цвет: ");
+        string color = Console.ReadLine();
+        var clothing = new Clothing(id, name, price, quantity, size, color);
+        products.Add(clothing);
     }
-
-    // Вывод всех товаров
-    public void DisplayProducts()
+    public void DisplayAvailableProducts() //вывод списка товаров в наличии
     {
-        Console.WriteLine("Все продукты в магазине:");
-        foreach (var product in products)
+        List<Product> availableProducts = new List<Product>();
+        foreach (var p in products)
+        {
+            if (p.Quantity > 0)
+            {
+                availableProducts.Add(p);
+            }
+        }
+        if (availableProducts.Count == 0)
+        {
+            Console.WriteLine("Нет товаров в наличии.");
+            return;
+        }
+        foreach (var product in availableProducts)
         {
             product.DisplayInfo();
-            Console.WriteLine();
         }
     }
 
-    // Вывод товаров в наличии
-    public void DisplayProductsInStock()
+    public void DisplayNotAvailableProducts() //вывод списка товаров вне наличия
     {
-        Console.WriteLine("Продукты в наличии:");
-        foreach (var product in products)
+        Console.WriteLine("\nОтсутствующие товары:");
+        List<Product> notAvailableProducts = new List<Product>();
+        foreach (var p in products)
         {
-            if (product.IsInStock())
+            if (p.Quantity == 0)
             {
-                product.DisplayInfo();
-                Console.WriteLine();
+                notAvailableProducts.Add(p);
             }
         }
-    }
-
-    // Вывод отсутствующих товаров
-    public void DisplayOutOfStockProducts()
-    {
-        Console.WriteLine("Продукты, которые отсутствуют:");
-        foreach (var product in products)
+        if (notAvailableProducts.Count == 0)
         {
-            if (!product.IsInStock())
-            {
-                product.DisplayInfo();
-                Console.WriteLine();
-            }
+            Console.WriteLine("Все товары в наличии.");
+            return;
+        }
+        foreach (var product in notAvailableProducts)
+        {
+            product.DisplayInfo();
         }
     }
-
-    // Сортировка по имени
-    public void SortByName()
+    public void SearchAndSortProducts(string searchTerm) //поиск по названию
     {
-        products = products.OrderBy(p => p.Name).ToList();
-    }
-
-    // Сортировка по цене
-    public void SortByPrice()
-    {
-        products = products.OrderBy(p => p.Price).ToList();
-    }
-
-    // Сортировка по количеству
-    public void SortByQuantity()
-    {
-        products = products.OrderBy(p => p.Quantity).ToList();
-    }
-
-    // Поиск товара по имени
-    public Product FindProduct(string name)
-    {
-        return products.FirstOrDefault(p => p.Name == name);
-    }
-
-    // Изменение цены
-    public void ChangePrice(string name, double newPrice)
-    {
-        Product product = FindProduct(name);
-        if (product != null)
+        // фильтрация по названию
+        if (!string.IsNullOrEmpty(searchTerm))
         {
-            product.SetPrice(newPrice);
-            Console.WriteLine("Стоимость была изменена");
+            foreach (var p in products)
+            {
+                if (p.Name.ToLower().Contains(searchTerm.ToLower()))
+                {
+                    p.DisplayInfo();
+                }
+            }
         }
         else
         {
-            Console.WriteLine("Стоимость не была изменена, товар не найден");
+            Console.WriteLine("Название нне найдено");
         }
     }
-
-    // Сохранение в файл
-    public void SaveToFile(string filename)
+    public void SortProducts(string sortBy = "name") //сортировка
     {
-        using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
+        List<Product> filteredProducts = new List<Product>();
+        switch (sortBy.ToLower())
         {
-            foreach (var product in products)
-            {
-                product.WriteToBinaryFile(writer);
-            }
+            case "название":
+                filteredProducts = products.OrderBy(p => p.Name).ToList();
+                break;
+            case "цена":
+                filteredProducts = products.OrderBy(p => p.Price).ToList();
+                break;
+            case "количество":
+                filteredProducts = products.OrderBy(p => p.Quantity).ToList();
+                break;
+            default:
+                filteredProducts = products.OrderBy(p => p.Name).ToList();
+                break;
         }
-        Console.WriteLine("Товары сохранены");
-    }
-
-    // Загрузка из файла
-    public void LoadFromFile(string filename)
-    {
-        products.Clear();
-        
-        using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
+        foreach (var product in filteredProducts)
         {
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            product.DisplayInfo();
+        }
+    }
+    public void SaveToBinaryFile()
+    {
+        string path = "default_data.bin";
+        try
+        {
+            using (var stream = File.Open(path, FileMode.Create))
+            using (var writer = new BinaryWriter(stream))
             {
-                string type = reader.ReadString();
-                if (type == "Food")
+                writer.Write(products.Count); // Записываем количество товаров
+
+                foreach (var product in products)
                 {
-                    LoadFood(reader);
-                }
-                else if (type == "Clothing")
-                {
-                    LoadClothing(reader);
+                    writer.Write(product.GetType().Name); // Записываем тип товара
+
+                    // Записываем общие свойства
+                    writer.Write(product.Id);
+                    writer.Write(product.Name);
+                    writer.Write(product.Price);
+                    writer.Write(product.Quantity);
+
+                    // Записываем специфичные свойства
+                    if (product is Clothing clothing)
+                    {
+                        writer.Write(clothing.Size);
+                        writer.Write(clothing.Color);
+                    }
+                    // Здесь можно добавить другие типы продуктов
                 }
             }
+            Console.WriteLine($"Данные успешно сохранены в файл: {path}");
         }
-        Console.WriteLine("Товары добавлены");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при сохранении: {ex.Message}");
+        }
     }
 
-    private void LoadFood(BinaryReader reader)
+    public void LoadFromBinaryFile()
     {
-        string name = reader.ReadString();
-        double price = reader.ReadDouble();
-        int quantity = reader.ReadInt32();
-        string expirationDate = reader.ReadString();
-        double weight = reader.ReadDouble();
-        
-        AddProduct(new Food(name, price, quantity, expirationDate, weight));
-    }
+        string path = "default_data.bin";
+        try
+        {
+            var loadedProducts = new List<Product>(); //вектор куда загружаем продукты
 
-    private void LoadClothing(BinaryReader reader)
-    {
-        string name = reader.ReadString();
-        double price = reader.ReadDouble();
-        int quantity = reader.ReadInt32();
-        string size = reader.ReadString();
-        string color = reader.ReadString();
-        string material = reader.ReadString();
-        
-        AddProduct(new Clother(name, price, quantity, size, color, material));
+            using (var stream = File.Open(path, FileMode.Open))
+            using (var reader = new BinaryReader(stream))
+            {
+                int count = reader.ReadInt32(); // Читаем количество товаров
+
+                for (int i = 0; i < count; i++)
+                {
+                    string typeName = reader.ReadString(); // Тип продукта
+
+                    // Общие свойства
+                    int id = reader.ReadInt32();
+                    string name = reader.ReadString();
+                    double price = reader.ReadDouble();
+                    int quantity = reader.ReadInt32();
+
+                    Product? product = null;
+
+                    switch (typeName)
+                    {
+                        case nameof(Clothing):
+                            string size = reader.ReadString();
+                            string color = reader.ReadString();
+                            product = new Clothing(id, name, price, quantity, size, color);
+                            break;
+                    }
+
+                    if (product != null)
+                        loadedProducts.Add(product);
+                }
+            }
+
+            products = loadedProducts;
+            //nextId = products.Count > 0 ? products.Max(p => p.Id) + 1 : 1;
+
+            Console.WriteLine($"Данные успешно загружены из файла: {path}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке: {ex.Message}");
+        }
     }
 }
-
-public class Program
+class Program
 {
-    private static void DisplayMenu()
+    static void Main()
     {
-        Console.WriteLine("1) Добавить новый товар");
-        Console.WriteLine("2) Изменить цену товара");
-        Console.WriteLine("3) Посмотреть все товары");
-        Console.WriteLine("4) Посмотреть товары в наличии");
-        Console.WriteLine("5) Посмотреть отсутствующие товары");
-        Console.WriteLine("6) Сортировать товары");
-        Console.WriteLine("7) Найти товар по имени");
-        Console.WriteLine("8) Сохранить товары в файл");
-        Console.WriteLine("9) Загрузить товары из файла");
-        Console.WriteLine("0) Выход");
-        Console.Write("Выберите действие: ");
-    }
+        Shop shop = new Shop();
+        bool exit = false;
 
-    private static void AddProductMenu(Store store)
-    {
-        Console.WriteLine("Выберите категорию товара:");
-        Console.WriteLine("1) Продукты питания");
-        Console.WriteLine("2) Одежда");
-        Console.Write("Выберите категорию: ");
-
-        int choice = int.Parse(Console.ReadLine());
-        Console.ReadLine(); // Очистка буфера
-
-        Console.Write("Введите название товара: ");
-        string name = Console.ReadLine();
-        Console.Write("Введите цену: ");
-        double price = double.Parse(Console.ReadLine());
-        Console.Write("Введите количество: ");
-        int quantity = int.Parse(Console.ReadLine());
-        Console.ReadLine(); // Очистка буфера
-
-        switch (choice)
+        while (!exit)
         {
-            case 1:
-                Console.Write("Введите срок годности: ");
-                string expirationDate = Console.ReadLine();
-                Console.Write("Введите вес (кг): ");
-                double weight = double.Parse(Console.ReadLine());
-                store.AddProduct(new Food(name, price, quantity, expirationDate, weight));
-                break;
-            case 2:
-                Console.Write("Введите размер: ");
-                string size = Console.ReadLine();
-                Console.Write("Введите цвет: ");
-                string color = Console.ReadLine();
-                Console.Write("Введите материал: ");
-                string material = Console.ReadLine();
-                store.AddProduct(new Clother(name, price, quantity, size, color, material));
-                break;
-            default:
-                Console.WriteLine("Неверный выбор");
-                return;
-        }
-        Console.WriteLine("Товар успешно добавлен");
-    }
+            Console.WriteLine("1. Добавить одежду");
+            Console.WriteLine("2. Показать товары в наличии");
+            Console.WriteLine("3. Показать отсутствующие товары");
+            Console.WriteLine("4. Поиск по названию");
+            Console.WriteLine("5. Сортировка товаров");
+            Console.WriteLine("6. Сохранить в файл");
+            Console.WriteLine("7. Загрузить из файла");
+            Console.WriteLine("0. Выход");
+            Console.Write("Выберите действие: ");
 
-    private static void SortProductsMenu(Store store)
-    {
-        Console.WriteLine("Сортировать по:");
-        Console.WriteLine("1) Названию");
-        Console.WriteLine("2) Цене");
-        Console.WriteLine("3) Количеству");
-        Console.Write("Выберите вариант: ");
+            string input = Console.ReadLine();
 
-        int choice = int.Parse(Console.ReadLine());
-        
-        switch (choice)
-        {
-            case 1:
-                store.SortByName();
-                break;
-            case 2:
-                store.SortByPrice();
-                break;
-            case 3:
-                store.SortByQuantity();
-                break;
-            default:
-                Console.WriteLine("Неверный выбор");
-                return;
-        }
-        Console.WriteLine("Товары отсортированы");
-    }
-
-    public static void Main()
-    {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
-        Store store = new Store();
-        int choice;
-        string filename = "products.dat";
-        
-        do
-        {
-            DisplayMenu();
-            choice = int.Parse(Console.ReadLine());
-            Console.ReadLine(); // Очистка буфера
-            
-            switch (choice)
+            switch (input)
             {
-                case 1:
-                    AddProductMenu(store);
+                case "1":
+                    shop.AddClothing();
+                    Console.WriteLine("Одежда добавлена.");
                     break;
-                case 2:
-                    Console.Write("Введите название товара: ");
-                    string name = Console.ReadLine();
-                    Console.Write("Введите новую цену: ");
-                    double newPrice = double.Parse(Console.ReadLine());
-                    store.ChangePrice(name, newPrice);
+                case "2":
+                    shop.DisplayAvailableProducts();
                     break;
-                case 3:
-                    store.DisplayProducts();
+                case "3":
+                    shop.DisplayNotAvailableProducts();
                     break;
-                case 4:
-                    store.DisplayProductsInStock();
+                case "4":
+                    Console.Write("Введите строку для поиска: ");
+                    shop.SearchAndSortProducts(Console.ReadLine());
                     break;
-                case 5:
-                    store.DisplayOutOfStockProducts();
+                case "5":
+                    Console.Write("Сортировать по (название / цена / количество): ");
+                    string sortBy = Console.ReadLine();
+                    shop.SortProducts(sortBy);
                     break;
-                case 6:
-                    SortProductsMenu(store);
+                case "6":
+                    shop.SaveToBinaryFile();
                     break;
-                case 7:
-                    Console.Write("Введите название товара: ");
-                    string searchName = Console.ReadLine();
-                    Product product = store.FindProduct(searchName);
-                    if (product != null)
-                    {
-                        product.DisplayInfo();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Товар не найден");
-                    }
+                case "7":
+                    shop.LoadFromBinaryFile();
                     break;
-                case 8:
-                    store.SaveToFile(filename);
-                    break;
-                case 9:
-                    store.LoadFromFile(filename);
-                    break;
-                case 0:
-                    Console.WriteLine("Выход из программы");
+                case "0":
+                    exit = true;
                     break;
                 default:
-                    Console.WriteLine("Неверный выбор, попробуйте снова");
+                    Console.WriteLine("Неверный выбор. Попробуйте снова.");
                     break;
             }
-        } while (choice != 0);
+        }
     }
 }
